@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import websockets
 from websockets.exceptions import ConnectionClosed
 import time
+import os
 
 from effort import *
 
@@ -18,12 +19,21 @@ winSize = win_secs * fs
 q = EffortQueue(winSize, EffortAmplitudeModulation())
 plot_bvp = None
 plot_effort = None
+session_path = '..' + os.sep + 'saved'
+
+
+def get_session_prefix(session_id: str):
+    return session_path + os.sep + session_id + os.sep + session_id
 
 
 async def received_data(websocket, path):
-    timestring = time.strftime('%Y-%m-%d-%H-%M-%S', time.gmtime())
-    f_samples_name = '../saved/' + timestring + '-samples.npy'
-    f_effort_name = '../saved/' + timestring + '-effort.npy'
+    session_id = time.strftime('%Y-%m-%d-%H-%M-%S', time.gmtime())
+    session_prefix = get_session_prefix(session_id)
+
+    f_samples_name = session_prefix + '-samples.npy'
+    f_effort_name = session_prefix + '-effort.npy'
+
+    os.mkdir(session_path + os.sep + session_id)
     with open(f_samples_name, 'a+b') as f_samples, open(f_effort_name, 'a+b') as f_effort:
         while True:
             try:
@@ -64,23 +74,6 @@ async def handle_received_data(websocket, f_samples, f_effort):
         print(e)
 
 
-def plot_bvp_and_effort():
-    effort = q.effort()
-    plot_effort.clear()
-    plot_effort.plot(effort)
-    plot_effort.title.set_text(q.calculator.__class__.__name__)
-    plot_effort.set_xlim([0, len(effort)])
-
-    bvp = q.samples()
-    plot_bvp.clear()
-    plot_bvp.plot(bvp)
-    plot_bvp.title.set_text('BVP')
-    plot_bvp.set_xlim([0, len(bvp)])
-    plot_bvp.set_ylim([-150, 150])
-
-    plt.pause(1 / 60)
-
-
 def run_command(message_json):
     try:
         command = message_json['command']
@@ -113,6 +106,23 @@ def change_mode(mode: str):
     q.calculator = globals()[mode]()
     print('changed effort calculation mode to ' + mode)
     restart()
+
+
+def plot_bvp_and_effort():
+    effort = q.effort()
+    plot_effort.clear()
+    plot_effort.plot(effort)
+    plot_effort.title.set_text(q.calculator.__class__.__name__)
+    plot_effort.set_xlim([0, len(effort)])
+
+    bvp = q.samples()
+    plot_bvp.clear()
+    plot_bvp.plot(bvp)
+    plot_bvp.title.set_text('BVP')
+    plot_bvp.set_xlim([0, len(bvp)])
+    plot_bvp.set_ylim([-150, 150])
+
+    plt.pause(1 / 60)
 
 
 if __name__ == "__main__":

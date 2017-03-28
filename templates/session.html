@@ -1,17 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height:100%;">
 <head>
     <meta charset="UTF-8">
     <title>Session</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="https://npmcdn.com/chart.js@latest/dist/Chart.bundle.min.js"></script>
+    <script src="https://npmcdn.com/Chart.Zoom.js@latest/Chart.Zoom.min.js"></script>
 </head>
-<body>
-{% if samples and effort %}
-    <canvas id="chart-bvp" style="width: 100%; height: 400px;"></canvas>
-    <canvas id="chart-effort" style="width: 100%; height: 400px;"></canvas>
+<body style="height: auto; position: absolute; left: 0; right: 0; top: 0; bottom: 0;">
+{% if samples and effort and canvas_width %}
+    <canvas id="chart-bvp" style="width: {{ canvas_width }}vw; height: 50%;"></canvas>
+    <canvas id="chart-effort" style="width: {{ canvas_width }}vw; height: 50%;"></canvas>
     <script type="text/javascript">
         const samples = JSON.parse("{{ samples }}");
         const effort = JSON.parse("{{ effort }}");
+        const options = {
+            responsive: false,
+            scales: {
+                xAxes: [
+                    {
+                        display: false
+                    }
+                ]
+            },
+            elements: {
+                point: {
+                    radius: 0
+                }
+            },
+            pan: {
+                enabled: true,
+                mode: 'y'
+            },
+            zoom: {
+                enabled: true,
+                mode: 'y',
+                sensitivity: 0.1
+            }
+        };
 
         new Chart('chart-bvp', {
             type: "line",
@@ -30,25 +55,12 @@
                     }
                 ]
             },
-            options: {
-                responsive: true,
+            options: Object.assign(options, {
                 title: {
                     display: true,
                     text: 'Respiratory effort estimation'
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            display: false
-                        }
-                    ]
-                },
-                elements: {
-                    point: {
-                        radius: 0
-                    }
                 }
-            }
+            })
         });
         new Chart('chart-effort', {
             type: "line",
@@ -67,24 +79,11 @@
                     }
                 ]
             },
-            options: {
-                responsive: true,
+            options: Object.assign(options, {
                 title: {
                     display: false
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            display: false
-                        }
-                    ]
-                },
-                elements: {
-                    point: {
-                        radius: 0
-                    }
                 }
-            }
+            })
         });
     </script>
 {% else %}
