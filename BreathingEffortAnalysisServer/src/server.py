@@ -22,8 +22,8 @@ plot_effort = None
 
 async def received_data(websocket, path):
     timestring = time.strftime('%Y-%m-%d-%H-%M-%S', time.gmtime())
-    f_samples_name = 'saved/' + timestring + '-samples.npy'
-    f_effort_name = 'saved/' + timestring + '-effort.npy'
+    f_samples_name = '../saved/' + timestring + '-samples.npy'
+    f_effort_name = '../saved/' + timestring + '-effort.npy'
     with open(f_samples_name, 'a+b') as f_samples, open(f_effort_name, 'a+b') as f_effort:
         while True:
             try:

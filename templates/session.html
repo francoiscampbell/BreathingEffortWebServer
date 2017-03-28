@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Session</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+</head>
+<body>
+{% if samples and effort %}
+    <canvas id="chart-bvp" style="width: 100%; height: 400px;"></canvas>
+    <canvas id="chart-effort" style="width: 100%; height: 400px;"></canvas>
+    <script type="text/javascript">
+        const samples = JSON.parse("{{ samples }}");
+        const effort = JSON.parse("{{ effort }}");
+
+        new Chart('chart-bvp', {
+            type: "line",
+            data: {
+                labels: [...new Array(samples.length).keys()],
+                datasets: [
+                    {
+                        label: 'BVP',
+                        backgroundColor: "rgba(179,181,198,0.2)",
+                        borderColor: "rgba(179,181,198,1)",
+                        pointBackgroundColor: "rgba(179,181,198,1)",
+                        pointBorderColor: "#fff",
+                        pointHoverBackgroundColor: "#fff",
+                        pointHoverBorderColor: "rgba(179,181,198,1)",
+                        data: samples
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Respiratory effort estimation'
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            display: false
+                        }
+                    ]
+                },
+                elements: {
+                    point: {
+                        radius: 0
+                    }
+                }
+            }
+        });
+        new Chart('chart-effort', {
+            type: "line",
+            data: {
+                labels: [...new Array(effort.length).keys()],
+                datasets: [
+                    {
+                        label: 'Effort',
+                        backgroundColor: "rgba(255,99,132,0.2)",
+                        borderColor: "rgba(255,99,132,1)",
+                        pointBackgroundColor: "rgba(255,99,132,1)",
+                        pointBorderColor: "#fff",
+                        pointHoverBackgroundColor: "#fff",
+                        pointHoverBorderColor: "rgba(255,99,132,1)",
+                        data: effort
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            display: false
+                        }
+                    ]
+                },
+                elements: {
+                    point: {
+                        radius: 0
+                    }
+                }
+            }
+        });
+    </script>
+{% else %}
+    <h1>No data</h1>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sessions</title>
+</head>
+<body>
+
+{% if sessions %}
+    <h1>Sessions</h1>
+    <div id="sessions">
+        {% for session in sessions %}
+            <a href="{% url 'session' session %}">{{ session }}</a><br>
+        {% endfor %}
+    </div>
+{% else %}
+    <h1>No sessions</h1>
+{% endif %}
+</body>
+</html>
